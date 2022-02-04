@@ -1,6 +1,6 @@
 # Getting Started with this Weather App
 
-We choise to create this project with ReactJs and Typescript
+We have choosen to create this project with ReactJs and Typescript
 
 ## Available Scripts
 
