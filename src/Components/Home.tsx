@@ -3,23 +3,28 @@ import { useState, useEffect } from 'react'
 import { ICity, IWeather } from '../Types/types'
 import { Search } from 'react-bootstrap-icons'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import Detail from '../Components/Detail'
+
 
 const Home = () => {
 
+    const navigate=useNavigate()
+
+
     const [milano, setMilano] = useState<ICity>()
+    const [milanoTemp, setMilanoTemp]=useState(0)
     const [london, setLondon] = useState<ICity>()
     const [newYork, setNewYork] = useState<ICity>()
     const [tokyo, setTokyo] = useState<ICity>()
     const [searchedCity, setSearchedCity] = useState<ICity>()
     const [query, setQuery] = useState('')
-    // 1 create a search field   DONE
-    // 2 create a handle function 
-    // 3 get data from api fro each main City  DONE
+   
 
     const getMilanoCity = async () => {
         const key = process.env.REACT_APP_PRIVATE_KEY
         try {
-            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=Milano&appid=6f896249659a343e39e46c930ba2be89')
+            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=Milano&units=metric&appid=6f896249659a343e39e46c930ba2be89')
             if (res.ok) {
                 const data = await res.json() as ICity
                 setMilano(data)
@@ -36,7 +41,7 @@ const Home = () => {
     const getNewYorkCity = async () => {
         const key = process.env.REACT_APP_PRIVATE_KEY
         try {
-            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=New York&appid=6f896249659a343e39e46c930ba2be89')
+            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=New York&units=metric&appid=6f896249659a343e39e46c930ba2be89')
             if (res.ok) {
                 const data = await res.json() as ICity
                 setNewYork(data)
@@ -53,7 +58,7 @@ const Home = () => {
     const getLondonCity = async () => {
         const key = process.env.REACT_APP_PRIVATE_KEY
         try {
-            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=London&appid=6f896249659a343e39e46c930ba2be89')
+            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=London&units=metric&appid=6f896249659a343e39e46c930ba2be89')
             if (res.ok) {
                 const data = await res.json() as ICity
                 setLondon(data)
@@ -70,7 +75,7 @@ const Home = () => {
     const getTokyoCity = async () => {
         const key = process.env.REACT_APP_PRIVATE_KEY
         try {
-            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=Tokyo&appid=6f896249659a343e39e46c930ba2be89')
+            const res = await fetch('http://api.openweathermap.org/data/2.5/forecast?q=Tokyo&units=metric&appid=6f896249659a343e39e46c930ba2be89')
             if (res.ok) {
                 const data = await res.json() as ICity
                 setTokyo(data)
@@ -84,7 +89,7 @@ const Home = () => {
         }
     }
 
-    
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value)
         console.log("This is the query", query)
@@ -117,17 +122,14 @@ const Home = () => {
         getLondonCity()
         getTokyoCity()
     }, [])
-    // 4 create a state DONE
-    // 5 update the state with api DONE
 
-    //  6 create card fo show first four results  DONE
 
 
 
     return (
         <>
             <h1 className="mb-4">WEATHER FORECAST</h1>
-            <Container>
+            <Container >
                 <Row className="d-block">
                     <Col xs={4} >
                         <Form className="d-flex" onSubmit={handleSubmit}>
@@ -147,6 +149,9 @@ const Home = () => {
                         </Form>
                     </Col>
                     <Row className="w-100">
+                        {
+                            searchedCity?<Detail />:
+                        <>
                         <Col xs="12" md="6" style={{ marginTop: "3.5rem" }}>
                             <Row className="w-100 justify-content-center">
                                 <Col xs="12"><Card style={{ backgroundColor: "#489dfe", marginBottom: "2rem", borderRadius: "10%", width: "75%" }}>
@@ -154,7 +159,7 @@ const Home = () => {
                                     <Card.ImgOverlay>
                                         <Card.Title style={{ fontSize: "1.8rem", fontWeight: "bold" }}>{milano?.city.name}</Card.Title>
                                         <Card.Text>
-                                            {milano?.list[0].weather[0].main} <span style={{ color: "blue" }}> {milano?.list[0].main.temp}F° </span>
+                                            {milano?.list[0].weather[0].main} <span style={{ color: "blue" }}> {milano?.list[0].main.temp}C° </span>
                                         </Card.Text>
                                         <Card.Text style={{ fontSize: "1.2rem", fontStyle: "italic", color: "blue" }}>
                                             "{milano?.list[0].weather[0].description}"
@@ -179,7 +184,6 @@ const Home = () => {
                                 </Card>
                                 </Col>
                             </Row>
-
                         </Col>
                         <Col xs="12" md="6" style={{ marginTop: "5.5rem" }}>
                             <Row className="w-100">
@@ -188,7 +192,7 @@ const Home = () => {
                                     <Card.ImgOverlay>
                                         <Card.Title style={{ fontSize: "1.8rem", fontWeight: "bold" }}>{newYork?.city.name}</Card.Title>
                                         <Card.Text>
-                                            {newYork?.list[0].weather[0].main} <span style={{ color: "blue" }}> ({newYork?.list[0].main.temp}-273.15)C° </span>
+                                            {newYork?.list[0].weather[0].main} <span style={{ color: "blue" }}> {newYork?.list[0].main.temp}C° </span>
                                         </Card.Text>
                                         <Card.Text style={{ fontSize: "1.2rem", fontStyle: "italic", color: "blue" }}>
                                             "{newYork?.list[0].weather[0].description}"
@@ -215,6 +219,7 @@ const Home = () => {
                             </Row>
 
                         </Col>
+                        </>}
                     </Row>
                 </Row>
             </Container>
